@@ -4,17 +4,32 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:json_query_modeler"
+        xmlns:f="clr-namespace:ScintillaNET;assembly=ScintillaNET"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="1" />
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ToolBar Grid.Row="0" Grid.Column="0" />
-        <WindowsFormsHost Grid.Row="1" Grid.Column="0" />
+        <ToolBar Grid.Row="0" Grid.Column="0">
+            <Button Content="Server Connection" x:Name="btnServerConnection" Click="btnServerConnection_Click"/>
+            <Button Content="Parameters" x:Name="btnParameters" Click="btnParameters_Click" />
+        </ToolBar>
+        <WindowsFormsHost Grid.Row="1" Grid.Column="0">
+            <f:Scintilla x:Name="TextArea"></f:Scintilla>
+        </WindowsFormsHost>
+        <GridSplitter Background="DarkGray" ResizeDirection="Rows" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                      ResizeBehavior="PreviousAndNext" />
+        <TabControl Grid.Row="3" Grid.Column="0" />
+        <StatusBar  Grid.Row="4" Grid.Column="0" >
+            <TextBlock x:Name="txtStatus" MinWidth="50" />
+        </StatusBar>
     </Grid>
 </Window>

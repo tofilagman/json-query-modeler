@@ -1,0 +1,63 @@
+﻿<Window x:Class="json_query_modeler.ConnectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:json_query_modeler"
+        mc:Ignorable="d"
+        Title="ConnectionWindow" Height="500" Width="400">
+    <Window.Resources>
+        <Style TargetType="RowDefinition">
+            <Setter Property="Height" Value="auto" />
+        </Style>
+        <Style TargetType="Control" x:Key="Inputs">
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="0 0 10 15" />
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontWeight" Value="DemiBold"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="MinHeight" Value="40"/>
+            <Setter Property="Padding" Value="20 10"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Content="Connection Setting" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontSize="20" Margin="0 0 0 20"></Label>
+        <Label Content="Provider" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"></Label>
+        <ComboBox x:Name="cbProvider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Inputs}"></ComboBox>
+        <Label Content="Server" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"></Label>
+        <TextBox x:Name="txtServer" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Inputs}"></TextBox>
+        <Label Content="Port" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"></Label>
+        <TextBox x:Name="txtPort" Grid.Row="3" Grid.Column="1" Width="80" Style="{StaticResource Inputs}"></TextBox>
+        <Label Content="Username" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right"></Label>
+        <TextBox x:Name="txtUsername" Grid.Row="4" Grid.Column="2" Style="{StaticResource Inputs}"></TextBox>
+        <Label Content="Password" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right"></Label>
+        <TextBox x:Name="txtPassword" Grid.Row="5" Grid.Column="2" Style="{StaticResource Inputs}"></TextBox>
+        <CheckBox x:Name="chkIntegratedSecurity" Content="Use Integrated Security" Grid.Row="6" Grid.Column="2" Style="{StaticResource Inputs}"></CheckBox>
+        <Label Content="Database" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right"></Label>
+        <ComboBox x:Name="cbDatabase" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Inputs}"></ComboBox>
+        <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="20" Orientation="Horizontal" >
+            <Button  Content="Submit" ></Button>
+            <Button  Content="Cancel"  ></Button>
+        </StackPanel>
+    </Grid>
+</Window>
