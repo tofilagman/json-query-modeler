@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Text;
+using Dapper;
 using Npgsql;
 
 namespace json_query_modeler.Logic
@@ -10,30 +12,49 @@ namespace json_query_modeler.Logic
     public class NpgService : ISqlService
     {
         public IDbConnection Connection { get; private set; }
-
-        public IConnectionInfo ConnectionInfo
-        {
-            get
-            {
-                return new NpgConnectionInfo(Connection as NpgsqlConnection);
-            }
-        }
+        public IConnectionInfo ConnectionInfo { get; private set; }
 
         public NpgService()
         {
 
+        } 
+
+        public string GetDisplayConnection
+        {
+            get
+            { 
+                return $"PostgreSql: {ConnectionInfo.Server}, {ConnectionInfo.Username}/{ConnectionInfo.Database}";
+            }
         }
 
-        public void Build(DbConnectionStringBuilder sqlConnectionString)
+        public ConnectionProvider ConnnectionType => ConnectionProvider.PostgreSql;
+
+        public void Build(IConnectionInfo conInfo)
         {
-            var constr = sqlConnectionString as NpgsqlConnectionStringBuilder;
-            Connection = new NpgsqlConnection(constr.ConnectionString);
+            ConnectionInfo = conInfo;
+            Connection = new NpgsqlConnection(conInfo.ConnectionString);
+        }
+
+        public List<string> LoadDatabase(IConnectionInfo conInfo)
+        {
+            using (var con = new NpgsqlConnection(conInfo.ConnectionString))
+            {
+                return con.Query<string>("Select datname from pg_database;").ToList();
+            }
+        }
+
+        public void TestConnect()
+        {
+            Connection.Open();
+            Connection.Close();
         }
     }
 
     public class NpgConnectionInfo : IConnectionInfo
     {
-        public NpgConnectionInfo(NpgsqlConnection npgConnection)
+        public NpgConnectionInfo() { }
+
+        public NpgConnectionInfo(NpgsqlConnection npgConnection) : this()
         {
             var conStr = new NpgsqlConnectionStringBuilder(npgConnection.ConnectionString);
 
@@ -45,16 +66,34 @@ namespace json_query_modeler.Logic
             TrustedConnection = conStr.IntegratedSecurity;
         }
 
-        public string Server { get; private set; }
+        public string Server { get; set; }
 
-        public int Port { get; private set; }
+        public int Port { get; set; }
 
-        public string Username { get; private set; }
+        public string Username { get; set; }
 
-        public string Password { get; private set; }
+        public string Password { get; set; }
 
-        public string Database { get; private set; }
+        public string Database { get; set; }
 
-        public bool TrustedConnection { get; private set; }
+        public bool TrustedConnection { get; set; }
+
+        public string ConnectionString
+        {
+            get
+            {
+                var conStr = new NpgsqlConnectionStringBuilder { Host = Server, Port = Port == -1 ? 5432 : Port, IntegratedSecurity = TrustedConnection };
+                if (!TrustedConnection)
+                {
+                    conStr.Username = Username;
+                    conStr.Password = Password;
+                }
+
+                if (Database != null)
+                    conStr.Database = Database;
+
+                return conStr.ConnectionString;
+            }
+        }
     }
 }

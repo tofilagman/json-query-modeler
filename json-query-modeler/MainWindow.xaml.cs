@@ -241,13 +241,14 @@ namespace json_query_modeler
             //    }
             //}
         }
-         
+
         private void btnServerConnection_Click(object sender, RoutedEventArgs e)
         {
-            var con = new ConnectionWindow { Sql = Sql }; 
+            var con = new ConnectionWindow(this.Sql);
             if (con.ShowDialog() == true)
             {
-                Sql = con.Sql;
+                this.Sql = con.Sql;
+                this.txtStatus.Text = this.Sql.GetDisplayConnection;
             }
         }
 

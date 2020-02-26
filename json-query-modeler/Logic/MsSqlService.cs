@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 
 namespace json_query_modeler.Logic
@@ -10,51 +12,94 @@ namespace json_query_modeler.Logic
     public class MsSqlService : ISqlService
     {
         public IDbConnection Connection { get; private set; }
-
-        public IConnectionInfo ConnectionInfo
-        {
-            get
-            {
-                return new MsSqlConnectionInfo(Connection as SqlConnection);
-            }
-        }
-
+        public IConnectionInfo ConnectionInfo { get; private set; }
+         
         public MsSqlService()
         {
 
         }
-
-        public void Build(DbConnectionStringBuilder sqlConnectionString)
+         
+        public string GetDisplayConnection
         {
-            var conStr = sqlConnectionString as SqlConnectionStringBuilder;
-            Connection = new SqlConnection(conStr.ConnectionString);
-        } 
+            get
+            { 
+                return $"MsSql: {ConnectionInfo.Server}, {ConnectionInfo.Username}/{ConnectionInfo.Database}";
+            }
+        }
+
+        public ConnectionProvider ConnnectionType => ConnectionProvider.MsSql;
+
+        public void Build(IConnectionInfo conInfo)
+        {
+            ConnectionInfo = conInfo;
+            Connection = new SqlConnection(conInfo.ConnectionString);
+        }
+
+        public List<string> LoadDatabase(IConnectionInfo conInfo)
+        {
+            using (var con = new SqlConnection(conInfo.ConnectionString))
+            {
+                return con.Query<string>("select name from sys.databases where snapshot_isolation_state = 0 ORDER by name").ToList();
+            }
+        }
+
+        public void TestConnect()
+        {
+            Connection.Open();
+            Connection.Close();
+        }
     }
 
     public class MsSqlConnectionInfo : IConnectionInfo
-    { 
-        public MsSqlConnectionInfo (SqlConnection sqlConnection)
+    {
+        public MsSqlConnectionInfo()
+        {
+            Port = -1;
+        }
+
+        public MsSqlConnectionInfo(SqlConnection sqlConnection) : this()
         {
             var conStr = new SqlConnectionStringBuilder(sqlConnection.ConnectionString);
+            var srv = conStr.DataSource.Split(',');
 
-            Server = conStr.DataSource;
-            Port = 1433;
+            Server = srv[0];
+            Port = srv.Length > 1 ? Convert.ToInt32(srv[1].Trim()) : Port;
             Username = conStr.UserID;
             Password = conStr.Password;
             Database = conStr.InitialCatalog;
             TrustedConnection = conStr.IntegratedSecurity;
         }
 
-        public string Server { get; private set; }
+        public string ConnectionString
+        {
+            get
+            {
+                var src = Port == -1 ? Server : $"{Server},{Port}";
 
-        public int Port { get; private set; }
+                var conStr = new SqlConnectionStringBuilder { DataSource = src, IntegratedSecurity = TrustedConnection };
+                if (!TrustedConnection)
+                {
+                    conStr.UserID = Username;
+                    conStr.Password = Password;
+                }
 
-        public string Username { get; private set; }
+                if (Database != null)
+                    conStr.InitialCatalog = Database;
 
-        public string Password { get; private set; }
+                return conStr.ConnectionString;
+            }
+        }
 
-        public string Database { get; private set; }
+        public string Server { get; set; }
 
-        public bool TrustedConnection { get; private set; }
+        public int Port { get; set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
+
+        public string Database { get; set; }
+
+        public bool TrustedConnection { get; set; }
     }
 }
