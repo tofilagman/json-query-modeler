@@ -56,8 +56,8 @@
         <Label Content="Database" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right"></Label>
         <ComboBox x:Name="cbDatabase" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Inputs}"></ComboBox>
         <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="20" Orientation="Horizontal" >
-            <Button  Content="Submit" ></Button>
-            <Button  Content="Cancel"  ></Button>
+            <Button  Content="Submit" x:Name="btnSubmit" Click="btnSubmit_Click" ></Button>
+            <Button  Content="Cancel" IsCancel="True" ></Button>
         </StackPanel>
     </Grid>
 </Window>

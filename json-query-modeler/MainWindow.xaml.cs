@@ -1,4 +1,5 @@
-﻿using ScintillaNET;
+﻿using json_query_modeler.Logic;
+using ScintillaNET;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,7 +23,7 @@ namespace json_query_modeler
     /// </summary>
     public partial class MainWindow : Window
     {
-        private IDbConnection dbConnection;
+        private ISqlService Sql;
 
         public MainWindow()
         {
@@ -243,10 +244,10 @@ namespace json_query_modeler
          
         private void btnServerConnection_Click(object sender, RoutedEventArgs e)
         {
-            var con = new ConnectionWindow();
+            var con = new ConnectionWindow { Sql = Sql }; 
             if (con.ShowDialog() == true)
             {
-                MessageBox.Show("lols");
+                Sql = con.Sql;
             }
         }
 
