@@ -6,6 +6,7 @@
     <RootNamespace>json_query_modeler</RootNamespace>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>json.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

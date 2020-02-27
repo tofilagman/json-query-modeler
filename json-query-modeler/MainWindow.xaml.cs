@@ -29,8 +29,9 @@ namespace json_query_modeler
         private DataSet CurSet = new DataSet();
 
         public MainWindow()
-        {
+        { 
             InitializeComponent();
+            this.Title = "Json Query Modeler";
             InitiateSqlEditor();
         }
 
