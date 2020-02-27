@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "CurrentDate",
+    "Value": "1990-01-01 00:00:00",
+    "SystemDefault": true
+  },
+  {
+    "Name": "LogInName",
+    "Value": "JPRizal",
+    "SystemDefault": true
+  },
+  {
+    "Name": "Firstname",
+    "Value": "Jose",
+    "SystemDefault": true
+  },
+  {
+    "Name": "LastName",
+    "Value": "Rizal",
+    "SystemDefault": true
+  },
+  {
+    "Name": "UserGroup",
+    "Value": "Admin User",
+    "SystemDefault": true
+  }
+]

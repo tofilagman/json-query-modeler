@@ -7,7 +7,7 @@
         xmlns:f="clr-namespace:ScintillaNET;assembly=ScintillaNET"
         mc:Ignorable="d"
         Title="Json Query Modeler"  
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>

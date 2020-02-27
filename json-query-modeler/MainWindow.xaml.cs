@@ -5,17 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Interop;
 using z.Data;
 
 namespace json_query_modeler
@@ -26,68 +21,12 @@ namespace json_query_modeler
     public partial class MainWindow : Window
     {
 
-        /*
-          private void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        HotKeyHost hotKeyHost = new HotKeyHost((HwndSource)HwndSource.FromVisual(App.Current.MainWindow));
-        hotKeyHost.AddHotKey(new CustomHotKey("ShowPopup", Key.Q, ModifierKeys.Control | ModifierKeys.Shift, true));
-        hotKeyHost.AddHotKey(new CustomHotKey("ClosePopup", Key.F2, ModifierKeys.Control, true));
-    }
-	
-[...]
-
-    [Serializable]
-    public class CustomHotKey : HotKey
-    {
-        public CustomHotKey(string name, Key key, ModifierKeys modifiers, bool enabled)
-            : base(key, modifiers, enabled)
-        {
-            Name = name;
-        }
-
-        private string name;
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (value != name)
-                {
-                    name = value;
-                    OnPropertyChanged(name);
-                }
-            }
-        }
-
-        protected override void OnHotKeyPress()
-        {
-            MessageBox.Show(string.Format("'{0}' has been pressed ({1})", Name, this));
-
-            base.OnHotKeyPress();
-        }
-
-
-        protected CustomHotKey(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-            : base(info, context)
-        {
-            Name = info.GetString("Name");
-        }
-
-        public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-
-            info.AddValue("Name", Name);
-        }
-    }
-             */
-
         private ISqlService Sql;
         private DataSet CurSet = new DataSet();
         private List<ParameterData> ParamSet = new List<ParameterData>();
 
         public MainWindow()
-        { 
+        {
             InitializeComponent();
             Width = SystemParameters.WorkArea.Width / 2;
             Height = SystemParameters.WorkArea.Height / 2;
@@ -360,6 +299,9 @@ namespace json_query_modeler
         {
             try
             {
+                if (Sql == null) throw new Exception("Connection is not yet establish");
+                if (string.IsNullOrWhiteSpace(TextArea.Text)) throw new Exception("Cannot execute an empty query");
+
                 CurSet = Sql.Query(TextArea.Text);
                 PlotSet();
             }
@@ -400,11 +342,17 @@ namespace json_query_modeler
                         {
                             p.Add(string.Format("ResultSet{0}", i), new PairCollection(CurSet.Tables[i]));
                         }
-                        trMain.Text = new { ResultSets = p }.ToJson(true);
+                        trMain.Text = new {
+                            ResultSets = p,
+                            Parameters  = this.ParamSet
+                        }.ToJson(true);
                     }
                     else if (CurSet.Tables.Count == 1)
                     {
-                        trMain.Text = new { ResultSet = new PairCollection(CurSet.Tables[0]) }.ToJson(true);
+                        trMain.Text = new { 
+                            ResultSet = new PairCollection(CurSet.Tables[0]),
+                            Parameters = this.ParamSet
+                        }.ToJson(true);
                     }
                     hstMain.Visibility = Visibility.Visible;
                     tbMain.Visibility = Visibility.Collapsed;
@@ -415,9 +363,43 @@ namespace json_query_modeler
         private void cbDisplay_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
-            { 
+            {
                 PlotSet((e.AddedItems[0] as ComboBoxItem).Content as string);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            HotKeyHost hotKeyHost = new HotKeyHost((HwndSource)HwndSource.FromVisual(App.Current.MainWindow));
+            hotKeyHost.AddHotKey(new CustomHotKey("Execute", Key.F5, ModifierKeys.None, true, new EventHandler(delegate { btnExecute_Click(sender, e); })));
+            this.LoadParamSet();
+        }
+
+        private void LoadParamSet()
+        {
+            try
+            {
+                var kj = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "appdata.json");
+                if (!File.Exists(kj))
+                {
+                    var _assembly = Assembly.GetExecutingAssembly();
+                    using (var _textStreamReader = new StreamReader(_assembly.GetManifestResourceStream("json_query_modeler.ParamSet.json")))
+                    {
+                        var hh = _textStreamReader.ReadToEnd();
+                        ParamSet = hh.ToObject<List<ParameterData>>();
+                        File.WriteAllText(kj, hh);
+                    }
+                }
+                else
+                {
+                    var hj = File.ReadAllText(kj);
+                    ParamSet = hj.ToObject<List<ParameterData>>();
+                }
+            } 
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);

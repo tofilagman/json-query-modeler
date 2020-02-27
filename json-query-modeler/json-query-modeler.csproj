@@ -10,6 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ParamSet.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ParamSet.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="dapper" Version="2.0.30" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Npgsql" Version="4.1.3.1" />
