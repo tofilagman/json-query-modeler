@@ -25,13 +25,72 @@ namespace json_query_modeler
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        /*
+          private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        HotKeyHost hotKeyHost = new HotKeyHost((HwndSource)HwndSource.FromVisual(App.Current.MainWindow));
+        hotKeyHost.AddHotKey(new CustomHotKey("ShowPopup", Key.Q, ModifierKeys.Control | ModifierKeys.Shift, true));
+        hotKeyHost.AddHotKey(new CustomHotKey("ClosePopup", Key.F2, ModifierKeys.Control, true));
+    }
+	
+[...]
+
+    [Serializable]
+    public class CustomHotKey : HotKey
+    {
+        public CustomHotKey(string name, Key key, ModifierKeys modifiers, bool enabled)
+            : base(key, modifiers, enabled)
+        {
+            Name = name;
+        }
+
+        private string name;
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if (value != name)
+                {
+                    name = value;
+                    OnPropertyChanged(name);
+                }
+            }
+        }
+
+        protected override void OnHotKeyPress()
+        {
+            MessageBox.Show(string.Format("'{0}' has been pressed ({1})", Name, this));
+
+            base.OnHotKeyPress();
+        }
+
+
+        protected CustomHotKey(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+            : base(info, context)
+        {
+            Name = info.GetString("Name");
+        }
+
+        public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+
+            info.AddValue("Name", Name);
+        }
+    }
+             */
+
         private ISqlService Sql;
         private DataSet CurSet = new DataSet();
+        private List<ParameterData> ParamSet = new List<ParameterData>();
 
         public MainWindow()
         { 
             InitializeComponent();
-            this.Title = "Json Query Modeler";
+            Width = SystemParameters.WorkArea.Width / 2;
+            Height = SystemParameters.WorkArea.Height / 2;
             InitiateSqlEditor();
         }
 
@@ -279,6 +338,7 @@ namespace json_query_modeler
         private void btnServerConnection_Click(object sender, RoutedEventArgs e)
         {
             var con = new ConnectionWindow(this.Sql);
+            con.Owner = this;
             if (con.ShowDialog() == true)
             {
                 this.Sql = con.Sql;
@@ -288,7 +348,12 @@ namespace json_query_modeler
 
         private void btnParameters_Click(object sender, RoutedEventArgs e)
         {
-
+            var con = new ParameterWindow(ParamSet);
+            con.Owner = this;
+            if (con.ShowDialog() == true)
+            {
+                this.ParamSet = con.ParamSet;
+            }
         }
 
         private void btnExecute_Click(object sender, RoutedEventArgs e)

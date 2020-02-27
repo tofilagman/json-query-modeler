@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:json_query_modeler"
         mc:Ignorable="d"
-        Title="ConnectionWindow" Height="500" Width="400">
+        Title="ConnectionWindow" Height="500" Width="400" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Window.Resources>
         <Style TargetType="RowDefinition">
             <Setter Property="Height" Value="auto" />
