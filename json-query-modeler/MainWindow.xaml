@@ -9,7 +9,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="1" />
             <RowDefinition Height="*"></RowDefinition>
@@ -18,16 +18,48 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ToolBar Grid.Row="0" Grid.Column="0">
-            <Button Content="Server Connection" x:Name="btnServerConnection" Click="btnServerConnection_Click"/>
-            <Button Content="Parameters" x:Name="btnParameters" Click="btnParameters_Click" />
+        <ToolBar Grid.Row="0" Grid.Column="0" ToolBarTray.IsLocked="True">
+            <ToolBar.Resources>
+                <Style TargetType="{x:Type ToolBarPanel}">
+                    <Setter Property="Orientation" Value="Vertical"/>
+                </Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Padding" Value="5"/>
+                </Style>
+            </ToolBar.Resources>
+            <DockPanel>
+                <ToolBarPanel Orientation="Horizontal">
+                    <Button Content="Server Connection" x:Name="btnServerConnection" Click="btnServerConnection_Click"/>
+                    <Line  Width="2" Stroke="DarkGray"/>
+                    <Button Content="Parameters" x:Name="btnParameters" Click="btnParameters_Click" />
+                </ToolBarPanel>
+                <ComboBox x:Name="cbDisplay" HorizontalAlignment="Right" DockPanel.Dock="Right" Padding="10 5" SelectionChanged="cbDisplay_SelectionChanged">
+                    <ComboBoxItem Content="Grid" IsSelected="True"></ComboBoxItem>
+                    <ComboBoxItem Content="Json"></ComboBoxItem>
+                </ComboBox>
+                <Button Content="Execute" x:Name="btnExecute" HorizontalAlignment="Right" Click="btnExecute_Click" DockPanel.Dock="Right" Margin="5 0" />
+            </DockPanel>
         </ToolBar>
         <WindowsFormsHost Grid.Row="1" Grid.Column="0">
             <f:Scintilla x:Name="TextArea"></f:Scintilla>
         </WindowsFormsHost>
         <GridSplitter Background="DarkGray" ResizeDirection="Rows" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                       ResizeBehavior="PreviousAndNext" />
-        <TabControl Grid.Row="3" Grid.Column="0" />
+        <TabControl Grid.Row="3" Grid.Column="0" x:Name="tbMain">
+            <TabControl.ItemTemplate>
+                <DataTemplate DataType="local:TabData">
+                    <TextBlock Text="{Binding Header}"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate DataType="local:TabData">
+                    <DataGrid x:Name="grdResult" ItemsSource="{Binding Data}" IsReadOnly="True" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+        <WindowsFormsHost x:Name="hstMain" Grid.Row="3" Grid.Column="0" Visibility="Collapsed">
+            <f:Scintilla x:Name="trMain"></f:Scintilla>
+        </WindowsFormsHost>
         <StatusBar  Grid.Row="4" Grid.Column="0" >
             <TextBlock x:Name="txtStatus" MinWidth="50" />
         </StatusBar>

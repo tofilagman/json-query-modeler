@@ -16,7 +16,8 @@ namespace json_query_modeler.Logic
         List<string> LoadDatabase(IConnectionInfo conInfo);
         void TestConnect();
 
-        string GetDisplayConnection { get; }
+        string GetDisplayConnection { get; } 
+        DataSet Query(string query);
     }
 
     public interface IConnectionInfo

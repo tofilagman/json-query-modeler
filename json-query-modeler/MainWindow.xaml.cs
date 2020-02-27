@@ -2,6 +2,7 @@
 using ScintillaNET;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -15,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using z.Data;
 
 namespace json_query_modeler
 {
@@ -24,6 +26,7 @@ namespace json_query_modeler
     public partial class MainWindow : Window
     {
         private ISqlService Sql;
+        private DataSet CurSet = new DataSet();
 
         public MainWindow()
         {
@@ -43,6 +46,36 @@ namespace json_query_modeler
             this.InitCodeFolding();
             //this.InitDragDropFile();
             //HotKeyManager.AddHotKey(this, () => this.btnExecute_Click(this, EventArgs.Empty), Keys.F5, false, false, false);
+
+            trMain.Lexer = Lexer.Json;
+            trMain.Styles[0].ForeColor = Color.Silver;
+            trMain.Styles[7].ForeColor = Color.FromArgb(0, 128, 0);
+            trMain.Styles[6].ForeColor = Color.FromArgb(0, 128, 0);
+            trMain.Styles[1].ForeColor = Color.Olive;
+            trMain.Styles[4].ForeColor = Color.Blue;
+            trMain.Styles[2].ForeColor = Color.FromArgb(163, 21, 21);
+            trMain.Styles[3].BackColor = Color.Pink;
+            trMain.Styles[8].ForeColor = Color.Purple;
+            trMain.SetProperty("fold", "1");
+            trMain.SetProperty("fold.compact", "1");
+            trMain.Margins[2].Type = MarginType.Symbol;
+            trMain.Margins[2].Mask = uint.MinValue;
+            trMain.Margins[2].Sensitive = true;
+            trMain.Margins[2].Width = 20;
+            for (int i = 25; i <= 31; i++)
+            {
+                trMain.Markers[i].SetForeColor(System.Drawing.SystemColors.ControlLightLight);
+                trMain.Markers[i].SetBackColor(System.Drawing.SystemColors.ControlDark);
+            }
+            trMain.Markers[30].Symbol = MarkerSymbol.BoxPlus;
+            trMain.Markers[31].Symbol = MarkerSymbol.BoxMinus;
+            trMain.Markers[25].Symbol = MarkerSymbol.BoxPlusConnected;
+            trMain.Markers[27].Symbol = MarkerSymbol.TCorner;
+            trMain.Markers[26].Symbol = MarkerSymbol.BoxMinusConnected;
+            trMain.Markers[29].Symbol = MarkerSymbol.VLine;
+            trMain.Markers[28].Symbol = MarkerSymbol.LCorner;
+            trMain.AutomaticFold = AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change;
+            //trMain.ReadOnly = true; 
         }
 
         private void InitColors()
@@ -162,39 +195,39 @@ namespace json_query_modeler
             //    this.splMain.Panel2.Controls.Clear();
             //    if (!this.btnGrid.Checked)
             //    {
-            //        Scintilla rtp = new Scintilla()
+            //        Scintilla trMain = new Scintilla()
             //        {
             //            Dock = DockStyle.Fill
             //        };
-            //        this.splMain.Panel2.Controls.Add(rtp);
-            //        rtp.Lexer = Lexer.Json;
-            //        rtp.Styles[0].ForeColor = Color.Silver;
-            //        rtp.Styles[7].ForeColor = Color.FromArgb(0, 128, 0);
-            //        rtp.Styles[6].ForeColor = Color.FromArgb(0, 128, 0);
-            //        rtp.Styles[1].ForeColor = Color.Olive;
-            //        rtp.Styles[4].ForeColor = Color.Blue;
-            //        rtp.Styles[2].ForeColor = Color.FromArgb(163, 21, 21);
-            //        rtp.Styles[3].BackColor = Color.Pink;
-            //        rtp.Styles[8].ForeColor = Color.Purple;
-            //        rtp.SetProperty("fold", "1");
-            //        rtp.SetProperty("fold.compact", "1");
-            //        rtp.Margins[2].Type = MarginType.Symbol;
-            //        rtp.Margins[2].Mask = -33554432;
-            //        rtp.Margins[2].Sensitive = true;
-            //        rtp.Margins[2].Width = 20;
+            //        this.splMain.Panel2.Controls.Add(trMain);
+            //        trMain.Lexer = Lexer.Json;
+            //        trMain.Styles[0].ForeColor = Color.Silver;
+            //        trMain.Styles[7].ForeColor = Color.FromArgb(0, 128, 0);
+            //        trMain.Styles[6].ForeColor = Color.FromArgb(0, 128, 0);
+            //        trMain.Styles[1].ForeColor = Color.Olive;
+            //        trMain.Styles[4].ForeColor = Color.Blue;
+            //        trMain.Styles[2].ForeColor = Color.FromArgb(163, 21, 21);
+            //        trMain.Styles[3].BackColor = Color.Pink;
+            //        trMain.Styles[8].ForeColor = Color.Purple;
+            //        trMain.SetProperty("fold", "1");
+            //        trMain.SetProperty("fold.compact", "1");
+            //        trMain.Margins[2].Type = MarginType.Symbol;
+            //        trMain.Margins[2].Mask = -33554432;
+            //        trMain.Margins[2].Sensitive = true;
+            //        trMain.Margins[2].Width = 20;
             //        for (int i = 25; i <= 31; i++)
             //        {
-            //            rtp.Markers[i].SetForeColor(SystemColors.ControlLightLight);
-            //            rtp.Markers[i].SetBackColor(SystemColors.ControlDark);
+            //            trMain.Markers[i].SetForeColor(SystemColors.ControlLightLight);
+            //            trMain.Markers[i].SetBackColor(SystemColors.ControlDark);
             //        }
-            //        rtp.Markers[30].Symbol = MarkerSymbol.BoxPlus;
-            //        rtp.Markers[31].Symbol = MarkerSymbol.BoxMinus;
-            //        rtp.Markers[25].Symbol = MarkerSymbol.BoxPlusConnected;
-            //        rtp.Markers[27].Symbol = MarkerSymbol.TCorner;
-            //        rtp.Markers[26].Symbol = MarkerSymbol.BoxMinusConnected;
-            //        rtp.Markers[29].Symbol = MarkerSymbol.VLine;
-            //        rtp.Markers[28].Symbol = MarkerSymbol.LCorner;
-            //        rtp.AutomaticFold = AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change;
+            //        trMain.Markers[30].Symbol = MarkerSymbol.BoxPlus;
+            //        trMain.Markers[31].Symbol = MarkerSymbol.BoxMinus;
+            //        trMain.Markers[25].Symbol = MarkerSymbol.BoxPlusConnected;
+            //        trMain.Markers[27].Symbol = MarkerSymbol.TCorner;
+            //        trMain.Markers[26].Symbol = MarkerSymbol.BoxMinusConnected;
+            //        trMain.Markers[29].Symbol = MarkerSymbol.VLine;
+            //        trMain.Markers[28].Symbol = MarkerSymbol.LCorner;
+            //        trMain.AutomaticFold = AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change;
             //        if (this.currentResult.Tables.Count > 1)
             //        {
             //            Pair p = new Pair();
@@ -202,11 +235,11 @@ namespace json_query_modeler
             //            {
             //                p.Add(string.Format("ResultSet{0}", i), new PairCollection(this.currentResult.Tables[i]));
             //            }
-            //            rtp.Text = new { ResultSets = p }.ToJson(true);
+            //            trMain.Text = new { ResultSets = p }.ToJson(true);
             //        }
             //        else if (this.currentResult.Tables.Count == 1)
             //        {
-            //            rtp.Text = new { ResultSet = new PairCollection(this.currentResult.Tables[0]) }.ToJson(true);
+            //            trMain.Text = new { ResultSet = new PairCollection(this.currentResult.Tables[0]) }.ToJson(true);
             //        }
             //    }
             //    else
@@ -255,6 +288,74 @@ namespace json_query_modeler
         private void btnParameters_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void btnExecute_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                CurSet = Sql.Query(TextArea.Text);
+                PlotSet();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void PlotSet(string display = null)
+        {
+            if (tbMain == null) return;
+
+            switch (display ?? cbDisplay.Text)
+            {
+                case "Grid":
+                    var TabDatas = new ObservableCollection<TabData>();
+
+                    for (var i = 0; i < CurSet.Tables.Count; i++)
+                    {
+                        TabDatas.Add(new TabData
+                        {
+                            Header = $"ResultSet{i} ({CurSet.Tables[i].Rows.Count})",
+                            Data = CurSet.Tables[i]
+                        });
+                    }
+
+                    tbMain.ItemsSource = TabDatas;
+                    tbMain.SelectedIndex = 0;
+                    hstMain.Visibility = Visibility.Collapsed;
+                    tbMain.Visibility = Visibility.Visible;
+                    break;
+                case "Json":
+                    if (CurSet.Tables.Count > 1)
+                    {
+                        Pair p = new Pair();
+                        for (int i = 0; i < CurSet.Tables.Count; i++)
+                        {
+                            p.Add(string.Format("ResultSet{0}", i), new PairCollection(CurSet.Tables[i]));
+                        }
+                        trMain.Text = new { ResultSets = p }.ToJson(true);
+                    }
+                    else if (CurSet.Tables.Count == 1)
+                    {
+                        trMain.Text = new { ResultSet = new PairCollection(CurSet.Tables[0]) }.ToJson(true);
+                    }
+                    hstMain.Visibility = Visibility.Visible;
+                    tbMain.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
+        private void cbDisplay_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            { 
+                PlotSet((e.AddedItems[0] as ComboBoxItem).Content as string);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

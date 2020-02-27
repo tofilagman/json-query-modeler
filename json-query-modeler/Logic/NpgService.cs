@@ -48,6 +48,32 @@ namespace json_query_modeler.Logic
             Connection.Open();
             Connection.Close();
         }
+
+        public DataSet Query(string query)
+        {
+            try
+            {
+                Connection.Open();
+
+                using (NpgsqlCommand cmd = new NpgsqlCommand(query, Connection as NpgsqlConnection))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandTimeout = 3000;
+                    using (DataSet ds = new DataSet())
+                    {
+                        using (NpgsqlDataAdapter adp = new NpgsqlDataAdapter(cmd))
+                        {
+                            adp.Fill(ds);
+                            return ds;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                Connection.Close();
+            }
+        }
     }
 
     public class NpgConnectionInfo : IConnectionInfo

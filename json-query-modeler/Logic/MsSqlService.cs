@@ -13,16 +13,16 @@ namespace json_query_modeler.Logic
     {
         public IDbConnection Connection { get; private set; }
         public IConnectionInfo ConnectionInfo { get; private set; }
-         
+
         public MsSqlService()
         {
 
         }
-         
+
         public string GetDisplayConnection
         {
             get
-            { 
+            {
                 return $"MsSql: {ConnectionInfo.Server}, {ConnectionInfo.Username}/{ConnectionInfo.Database}";
             }
         }
@@ -47,6 +47,32 @@ namespace json_query_modeler.Logic
         {
             Connection.Open();
             Connection.Close();
+        }
+
+        public DataSet Query(string query)
+        {
+            try
+            {
+                Connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(query, Connection as SqlConnection))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandTimeout = 3000;
+                    using (DataSet ds = new DataSet())
+                    {
+                        using (SqlDataAdapter adp = new SqlDataAdapter(cmd))
+                        {
+                            adp.Fill(ds);
+                            return ds;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
     }
 
