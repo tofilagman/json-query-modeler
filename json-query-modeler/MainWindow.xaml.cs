@@ -383,7 +383,9 @@ namespace json_query_modeler
         {
             try
             {
-                var kj = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "appdata.json");
+                var ht = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JsonQueryModeler");
+                var kj = Path.Combine(ht, "appdata.json");
+                
                 if (!File.Exists(kj))
                 {
                     var _assembly = Assembly.GetExecutingAssembly();
@@ -391,6 +393,10 @@ namespace json_query_modeler
                     {
                         var hh = _textStreamReader.ReadToEnd();
                         ParamSet = hh.ToObject<List<ParameterData>>();
+
+                        if (!Directory.Exists(ht))
+                            Directory.CreateDirectory(ht);
+
                         File.WriteAllText(kj, hh);
                     }
                 }

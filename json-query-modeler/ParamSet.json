@@ -23,5 +23,20 @@
     "Name": "UserGroup",
     "Value": "Admin User",
     "SystemDefault": true
+  },
+  {
+    "Name": "Company",
+    "Value": "Company XYZ Inc",
+    "SystemDefault": true
+  },
+  {
+    "Name": "Branch",
+    "Value": "Main Branch",
+    "SystemDefault": true
+  },
+  {
+    "Name": "Tag",
+    "Value": "(Unspecified)",
+    "SystemDefault": true
   }
 ]

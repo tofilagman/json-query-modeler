@@ -27,7 +27,7 @@ namespace json_query_modeler
             try
             {
                 this.grdMain.CommitEdit();
-                var kj = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "appdata.json");
+                var kj = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JsonQueryModeler", "appdata.json");
                 var gh = this.ParamSet.ToJson(true);
                 File.WriteAllText(kj, gh);
                 DialogResult = true;
