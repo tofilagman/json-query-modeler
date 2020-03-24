@@ -344,14 +344,14 @@ namespace json_query_modeler
                         }
                         trMain.Text = new {
                             ResultSets = p,
-                            Parameters  = this.ParamSet
+                            Parameters  = this.FormattedParamSet()
                         }.ToJson(true);
                     }
                     else if (CurSet.Tables.Count == 1)
                     {
                         trMain.Text = new { 
                             ResultSet = new PairCollection(CurSet.Tables[0]),
-                            Parameters = this.ParamSet
+                            Parameters = this.FormattedParamSet()
                         }.ToJson(true);
                     }
                     hstMain.Visibility = Visibility.Visible;
@@ -410,6 +410,16 @@ namespace json_query_modeler
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private Pair FormattedParamSet()
+        {
+            var pr = new Pair();
+            foreach(var prs in this.ParamSet)
+            {
+                pr.Add(prs.Name, prs.Value);
+            }
+            return pr;
         }
     }
 }

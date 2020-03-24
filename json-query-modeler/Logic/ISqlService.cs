@@ -35,6 +35,7 @@ namespace json_query_modeler.Logic
     public enum ConnectionProvider
     {
         MsSql = 0,
-        PostgreSql = 1
+        PostgreSql = 1,
+        MySql = 2
     }
 }

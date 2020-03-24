@@ -27,7 +27,7 @@ namespace json_query_modeler
         {
             InitializeComponent();
 
-            cbProvider.ItemsSource = new List<ConnectionProvider> { ConnectionProvider.MsSql, ConnectionProvider.PostgreSql };
+            cbProvider.ItemsSource = new List<ConnectionProvider> { ConnectionProvider.MsSql, ConnectionProvider.PostgreSql, ConnectionProvider.MySql };
            
             this.Sql = sql;
 
@@ -94,6 +94,24 @@ namespace json_query_modeler
                         Sql.Build(npgInfo);
                         Sql.TestConnect();
                         break;
+                    case ConnectionProvider.MySql:
+
+                        if (chkIntegratedSecurity.IsChecked == true)
+                            throw new InvalidOperationException("Integrated Security doesnt supported by MySql Server");
+
+                        var myInfo = new MySqlConnectionInfo
+                        {
+                            Server = txtServer.Text,
+                            Port = Convert.ToInt32(string.IsNullOrWhiteSpace(txtPort.Text) ? "-1" : txtPort.Text), 
+                            Username = txtUsername.Text,
+                            Password = txtPassword.Password,
+                            Database = cbDatabase.Text
+                        };
+
+                        Sql = new MySqlService();
+                        Sql.Build(myInfo);
+                        Sql.TestConnect();
+                        break;
                 }
 
                 DialogResult = true;
@@ -154,6 +172,22 @@ namespace json_query_modeler
 
                         var npgsql = new NpgService();
                         cbDatabase.ItemsSource = npgsql.LoadDatabase(npgInfo);
+                        break;
+                    case ConnectionProvider.MySql:
+
+                        if (chkIntegratedSecurity.IsChecked == true)
+                            throw new InvalidOperationException("Integrated Security doesnt supported by MySql Server");
+
+                        var myInfo = new MySqlConnectionInfo
+                        {
+                            Server = txtServer.Text,
+                            Port = Convert.ToInt32(string.IsNullOrWhiteSpace(txtPort.Text) ? "-1" : txtPort.Text), 
+                            Username = txtUsername.Text,
+                            Password = txtPassword.Password
+                        };
+
+                        var mysql = new MySqlService();
+                        cbDatabase.ItemsSource = mysql.LoadDatabase(myInfo);
                         break;
                 }
 
